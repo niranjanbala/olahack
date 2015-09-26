@@ -43,7 +43,23 @@ if (cluster.isMaster) {
     app.get('/team45', function(request, response) {
         response.send("OLA Share");
     });
+    app.get('/share', function(request, response) {
+        response.jsonp({
+            "success": true
+        })
+    });
     app.get('/book', function(request, response) {
+        //pickup_lat
+        //pick_lng
+        //drop_lat
+        //drop_lng
+        //X-APP-TOKEN
+        //AUTHORIZATION
+        var auth = req.headers['X-APP-TOKEN'];
+        var auth = req.headers['Authorization'];
+        //fire parse query and get rides going to same destinaton & starting point is within 3 kms.
+        //on response fire ola request to get rides.
+        //accumulate and fire response.
         response.jsonp({
             "rideOptions": [
                 {
