@@ -45,40 +45,18 @@ if (cluster.isMaster) {
     });
     app.get('/book', function(request, response) {
         response.jsonp({
-            "olaShare": [{
-                "rideId": "NT3f4eioqK",
-                "pickup": "Embassy Golf Links Business Park",
-                "desitination": "Knowlarity Communications",
-                "timeToYourPlace": "10 minute"
-            }],
-            "olaRide": {
-                "categories": [{
-                        "id": "sedan",
-                        "display_name": "Sedan",
-                        "currency": "INR",
-                        "distance_unit": "kilometre",
-                        "time_unit": "minute",
-                        "eta": 2,
-                        "distance": 0.0,
-                        "image": "http://d1foexe15giopy.cloudfront.net/sedan.png",
-                        "fare_breakup": [{
-                                "type": "flat_rate",
-                                "minimum_distance": "4",
-                                "minimum_time": "10",
-                                "base_fare": "100.0",
-                                "cost_per_distance": "13",
-                                "waiting_cost_per_minute": "0",
-                                "ride_cost_per_minute": "1",
-                                "surcharge": []
-                            }
-
-                        ]
-
-                    }
-
-                ],
-                "ride_estimate": {}
-            }
+            "rideOptions": [
+                {
+                    "rideId": "NT3f4eioqK",
+                    "pickup": "Embassy Golf Links Business Park",
+                    "desitination": "Knowlarity Communications",
+                    "timeToYourPlace": "10 minute"
+                },
+                {
+                    "id": "sedan",
+                    "eta": 2,
+                }
+            ]           
         });
     });
     app.set('port', process.env.PORT || 80);
