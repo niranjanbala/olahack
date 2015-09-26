@@ -49,7 +49,7 @@ if (cluster.isMaster) {
                 "rideId": "NT3f4eioqK",
                 "pickup": "Embassy Golf Links Business Park",
                 "desitination": "Knowlarity Communications",
-                "timeToYourPlace": "10 min"
+                "timeToYourPlace": "10 minute"
             }],
             "olaRides": [{
                 "categories": [{
