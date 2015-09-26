@@ -45,7 +45,8 @@ if (cluster.isMaster) {
     });
     app.get('/share', function(request, response) {
         response.jsonp({
-            "success": true
+            "success": true,
+            "crn": ""
         })
     });
     app.get('/book', function(request, response) {
