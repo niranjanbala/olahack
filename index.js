@@ -39,10 +39,10 @@ if (cluster.isMaster) {
       // fallback to standard filter function
       return compression.filter(req, res)
     }
-    app.get('/auth/ola/callback', function(request, response) {
-      response.send('Hello Ola!')
+    app.get('/team45', function(request, response) {
+      response.send("OLA Share");
     });
-    app.set('port', process.env.PORT || 3000);
+    app.set('port', process.env.PORT || 80);
     app.listen(app.get('port'), function() {
       console.log("Node app is running at localhost:" + app.get('port'))
     });
