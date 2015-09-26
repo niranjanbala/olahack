@@ -46,9 +46,9 @@ if (cluster.isMaster) {
     app.get('/book', function(request, response) {
         response.jsonp({
             "olaShare": [{
-                "rideId": "abc",
-                "pickup": "HSR Layout",
-                "desitination": "MG Road",
+                "rideId": "NT3f4eioqK",
+                "pickup": "Embassy Golf Links Business Park",
+                "desitination": "Knowlarity Communications",
                 "timeToYourPlace": "10 min"
             }],
             "olaRides": [{
