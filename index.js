@@ -51,7 +51,7 @@ if (cluster.isMaster) {
                 "desitination": "Knowlarity Communications",
                 "timeToYourPlace": "10 minute"
             }],
-            "olaRides": [{
+            "olaRides": {
                 "categories": [{
                         "id": "sedan",
                         "display_name": "Sedan",
@@ -78,7 +78,7 @@ if (cluster.isMaster) {
 
                 ],
                 "ride_estimate": {}
-            }]
+            }
         });
     });
     app.set('port', process.env.PORT || 80);
