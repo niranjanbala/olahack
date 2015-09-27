@@ -46,8 +46,8 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         //save in ride
         var query = new Parse.Query("Ride");
-        query.equalTo("rideId", request.query.rideId);
-        query.first({
+        //query.equalTo("rideId", request.query.rideId);
+        query.get(request.query.rideId,{
             success: function(ride) {
                 var ids = ride.get("sharedWithOlaUserIds");
                 ids.push(request.query.sharingOlaUserId)
@@ -58,14 +58,14 @@ if (cluster.isMaster) {
                 ride.save(null, {
                     success: function(userFilter) {
                         var confirmQuery = new Parse.Query(Parse.Installation);
-                        confirmQuery.equalTo("olaUserId", req.query.sharingOlaUserId);
+                        confirmQuery.equalTo("olaUserId", request.query.sharingOlaUserId);
                         Parse.Push.send({
                             where: confirmQuery,
                             data: {
                                 alert: "Gokul has agreed to share the ride with you",
-                                action: JSON.stringify({
+                                action: {
                                     "rideId":request.query.rideId
-                                })
+                                }
                             }
                         }, {
                             success: function() {
@@ -130,11 +130,11 @@ if (cluster.isMaster) {
             where: query,
             data: {
                 alert: "Rajesh has requested to share a ride with you",
-                action: JSON.stringify({
+                action: {
                     "rideId": request.query.rideId,
                     "sharingOlaUserId": request.query.sharingOlaUserId,
                     "bookingOlaUserId": request.query.bookingOlaUserId
-                })
+                }
             }
         }, {
             success: function() {
