@@ -43,10 +43,32 @@ if (cluster.isMaster) {
     app.get('/team45', function(request, response) {
         response.send("OLA Share");
     });
+    app.get('/confirm', function(request, response) {
+
+    });
+    app.get('/cancel', function(request, response) {
+        
+    });
     app.get('/share', function(request, response) {
-        response.jsonp({
-            "success": true
-        })
+        var Parse = require('parse/node');
+        var query = new Parse.Query(Parse.Installation);
+        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
+        Parse.Push.send({
+          where: query,
+          data: {
+            text: "Willie Hayes has requested to share a ride with you",
+            "fromOlaUserId": request.query.fromOlaUserId,
+            "toOlaUserId": request.query.toOlaUserId
+          }
+        }, {
+          success: function() {
+            response.jsonp({success: true});
+          },
+          error: function(error) {
+            console.log(error);
+            response.jsonp({success: false});
+          }
+        });
     });
     app.get('/book', function(request, response) {
         var pickup_lat=request.query.pickup_lat;
@@ -79,6 +101,7 @@ if (cluster.isMaster) {
                 if(rideObject.get("sharedWithOlaUserIds").length<rideObject.get("availableSeats"))
                 rideOptions.push({
                     "rideId": rideObject.id,
+                    "olaUserId":rideObject.get("olaUserId"),
                     "pickup": rideObject.get("pickupPoint"),
                     "desitinationLat": rideObject.get("destinationLat"),
                     "desitinationLng": rideObject.get("destinationLng"),
