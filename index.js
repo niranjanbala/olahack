@@ -40,9 +40,6 @@ if (cluster.isMaster) {
         // fallback to standard filter function
         return compression.filter(req, res)
     }
-    app.get('/team45', function(request, response) {
-        response.send("OLA Share");
-    });
     app.get('/confirm', function(request, response) {
         var Parse = require('parse/node');
         var query = new Parse.Query(Parse.Installation);
@@ -62,14 +59,9 @@ if (cluster.isMaster) {
               success: function(userFilter) {
                 Parse.Push.send({
                   where: query,
-                  data: JSON.stringify({
-                    "text": "Sachin has agreed to share the ride with you",
-                    "rideId": request.query.rideId,
-                    "type": "status",
-                    "sharingOlaUserId": request.query.sharingOlaUserId,
-                    "bookingOlaUserId": request.query.bookingOlaUserId,
-                    "confirm": true
-                  })
+                  data: {
+                    alert: "Gokul has agreed to share the ride with you"
+                  }
                 }, {
                   success: function() {
                     response.jsonp({success: true});
@@ -95,14 +87,9 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");        
         Parse.Push.send({
           where: query,
-          data: JSON.stringify({
-            "text": "Sachin has declined to share the ride with you",
-            "type": "status",
-            "rideId": request.query.rideId,
-            "sharingOlaUserId": request.query.sharingOlaUserId,
-            "bookingOlaUserId": request.query.bookingOlaUserId,
-            "confirm": false
-          })
+          data: {
+            alert: "Gokul has declined to share the ride with you"
+          }
         }, {
           success: function() {
             response.jsonp({success: true});
@@ -118,13 +105,15 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
           where: query,
-          data: JSON.stringify({
-            "text": "Willie Hayes has requested to share a ride with you",
+          data: {
+            alert: JSON.stringify({
+            "text": "Rajesh has requested to share a ride with you",
             "type": "request",
             "rideId": request.query.rideId,            
             "sharingOlaUserId": request.query.sharingOlaUserId,
             "bookingOlaUserId": request.query.bookingOlaUserId
-          })
+            })
+            }
         }, {
           success: function() {
             response.jsonp({success: true});
