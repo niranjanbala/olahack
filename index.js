@@ -49,39 +49,54 @@ if (cluster.isMaster) {
         })
     });
     app.get('/book', function(request, response) {
-        //pickup_lat
-        //pick_lng
-        
-        //drop_lat
-        //drop_lng
+        var pickup_lat=request.query.pickup_lat;
+        var pickup_lng=request.query.pickup_lng;
+        var drop_lat=request.query.drop_lat;
+        var drop_lng=request.query.drop_lng;
         //X-APP-TOKEN
         //AUTHORIZATION
         var auth = request.headers['X-APP-TOKEN'];
         var auth = request.headers['Authorization'];
         //fire parse query and get rides going to same destinaton & starting point is within 3 kms.
-        var Parse = require('parse').Parse;
+        var Parse = require('parse/node');
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         var query = new Parse.Query("Ride");
-
-        //on response fire ola request to get rides.
-        //accumulate and fire response.
-        response.jsonp({
-            "rideOptions": [
-                {
-                    "rideId": "NT3f4eioqK",
-                    "pickup": "Embassy Golf Links Business Park",
-                    "desitination": "Knowlarity Communications",
+        // Interested in locations near user.
+        var point = new Parse.GeoPoint({latitude: Number(pickup_lat), longitude: Number(pickup_lng)});
+        //query.near("pickupPoint", point);
+        query.withinKilometers("pickupPoint", point, 3);
+        query.equalTo("shareOk", true);
+        query.equalTo("destinationLat", Number(drop_lat));
+        query.equalTo("destinationLng", Number(drop_lng));
+        // Limit what could be a lot of points.
+        query.limit(10);
+        query.find({
+          success: function(rideObjects) {
+            var rideOptions=[];
+            for(var i=0;i<rideObjects.length;i++) {
+                var rideObject=rideObjects[i];
+                var rideInfo=rideObject.get("olaRideTrackInfo");
+                if(rideObject.get("sharedWithOlaUserIds").length<rideObject.get("availableSeats"))
+                rideOptions.push({
+                    "rideId": rideObject.id,
+                    "pickup": rideObject.get("pickupPoint"),
+                    "desitinationLat": rideObject.get("destinationLat"),
+                    "desitinationLng": rideObject.get("destinationLng"),
                     "timeToYourPlace": "10 minute",
-                    "driver_name": "Rajesh",
-                    "car_model":"Fiat Punto",
-                    "cab_number":"KA-01-11-111"
-                },
-                {
+                    "driver_name": rideInfo.driver_name,
+                    "car_model":rideInfo.car_model,
+                    "cab_number":rideInfo.cab_number
+                });
+            }
+            rideOptions.push({
                     "id": "sedan",
                     "eta": 2,
-                }
-            ]           
-        });
+            });
+            response.jsonp({
+                "rideOptions": rideOptions,
+            });
+          }
+        });        
     });
     app.set('port', process.env.PORT || 80);
     app.listen(app.get('port'), function() {
