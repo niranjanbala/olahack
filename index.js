@@ -58,6 +58,7 @@ if (cluster.isMaster) {
                 ride.save(null, {
                     success: function(userFilter) {
                         var confirmQuery = new Parse.Query(Parse.Installation);
+                        confirmQuery.equalTo("olaUserId", req.query.sharingOlaUserId);
                         Parse.Push.send({
                             where: confirmQuery,
                             data: {
@@ -96,6 +97,7 @@ if (cluster.isMaster) {
     app.get('/cancel', function(request, response) {
         var Parse = require('parse/node');
         var query = new Parse.Query(Parse.Installation);
+        query.equalTo("olaUserId", req.query.sharingOlaUserId);
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
             where: query,
@@ -119,6 +121,7 @@ if (cluster.isMaster) {
     app.get('/share', function(request, response) {
         var Parse = require('parse/node');
         var query = new Parse.Query(Parse.Installation);
+        query.equalTo("olaUserId", request.query.bookingOlaUserId);
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
             where: query,
