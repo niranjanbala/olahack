@@ -45,20 +45,24 @@ if (cluster.isMaster) {
     });
     app.get('/share', function(request, response) {
         response.jsonp({
-            "success": true,
-            "crn": ""
+            "success": true
         })
     });
     app.get('/book', function(request, response) {
         //pickup_lat
         //pick_lng
+        
         //drop_lat
         //drop_lng
         //X-APP-TOKEN
         //AUTHORIZATION
-        var auth = req.headers['X-APP-TOKEN'];
-        var auth = req.headers['Authorization'];
+        var auth = request.headers['X-APP-TOKEN'];
+        var auth = request.headers['Authorization'];
         //fire parse query and get rides going to same destinaton & starting point is within 3 kms.
+        var Parse = require('parse').Parse;
+        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
+        var query = new Parse.Query("Ride");
+
         //on response fire ola request to get rides.
         //accumulate and fire response.
         response.jsonp({
@@ -67,7 +71,10 @@ if (cluster.isMaster) {
                     "rideId": "NT3f4eioqK",
                     "pickup": "Embassy Golf Links Business Park",
                     "desitination": "Knowlarity Communications",
-                    "timeToYourPlace": "10 minute"
+                    "timeToYourPlace": "10 minute",
+                    "driver_name": "Rajesh",
+                    "car_model":"Fiat Punto",
+                    "cab_number":"KA-01-11-111"
                 },
                 {
                     "id": "sedan",
