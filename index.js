@@ -63,7 +63,9 @@ if (cluster.isMaster) {
                             where: confirmQuery,
                             data: {
                                 alert: "Gokul has agreed to share the ride with you",
-                                action: request.query.rideId
+                                action: JSON.stringify({
+                                    "rideId":request.query.rideId
+                                })
                             }
                         }, {
                             success: function() {
