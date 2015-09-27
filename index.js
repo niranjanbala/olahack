@@ -44,10 +44,73 @@ if (cluster.isMaster) {
         response.send("OLA Share");
     });
     app.get('/confirm', function(request, response) {
-
+        var Parse = require('parse/node');
+        var query = new Parse.Query(Parse.Installation);
+        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
+        //save in ride
+        var query = new Parse.Query("Ride");
+        query.equalTo("rideId", request.query.rideId);
+        query.first({
+          success: function(ride) {
+            var ids=ride.get("sharedWithOlaUserIds");
+            ids.push(request.query.sharingOlaUserId)
+            if(ids.length==ride.get("availableSeats")){
+                ride.set("shareOk", false);                                
+            }
+            ride.set("sharedWithOlaUserIds", ids);
+            ride.save(null, {
+              success: function(userFilter) {
+                Parse.Push.send({
+                  where: query,
+                  data: {
+                    "text": "Sachin has agreed to share the ride with you",
+                    "rideId": request.query.rideId,
+                    "type": "status",
+                    "sharingOlaUserId": request.query.sharingOlaUserId,
+                    "bookingOlaUserId": request.query.bookingOlaUserId,
+                    "confirm": true
+                  }
+                }, {
+                  success: function() {
+                    response.jsonp({success: true});
+                  },
+                  error: function(error) {
+                    response.jsonp({success: false, "message": error.message});
+                  }
+                });
+              },
+              error: function(userFilter, error) {
+                response.jsonp({success: false, "message": error.message});
+              }
+            });
+          },
+          error: function(error) {
+            response.jsonp({success: false, "message": error.message});
+          }
+        });        
     });
     app.get('/cancel', function(request, response) {
-        
+        var Parse = require('parse/node');
+        var query = new Parse.Query(Parse.Installation);
+        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");        
+        Parse.Push.send({
+          where: query,
+          data: {
+            "text": "Sachin has declined to share the ride with you",
+            "type": "status",
+            "rideId": request.query.rideId,
+            "sharingOlaUserId": request.query.sharingOlaUserId,
+            "bookingOlaUserId": request.query.bookingOlaUserId,
+            "confirm": false
+          }
+        }, {
+          success: function() {
+            response.jsonp({success: true});
+          },
+          error: function(error) {
+            response.jsonp({success: false, "message": error.message});
+          }
+        });
     });
     app.get('/share', function(request, response) {
         var Parse = require('parse/node');
@@ -56,9 +119,11 @@ if (cluster.isMaster) {
         Parse.Push.send({
           where: query,
           data: {
-            text: "Willie Hayes has requested to share a ride with you",
-            "fromOlaUserId": request.query.fromOlaUserId,
-            "toOlaUserId": request.query.toOlaUserId
+            "text": "Willie Hayes has requested to share a ride with you",
+            "type": "request",
+            "rideId": request.query.rideId,            
+            "sharingOlaUserId": request.query.sharingOlaUserId,
+            "bookingOlaUserId": request.query.bookingOlaUserId
           }
         }, {
           success: function() {
@@ -77,20 +142,18 @@ if (cluster.isMaster) {
         var drop_lng=request.query.drop_lng;
         //X-APP-TOKEN
         //AUTHORIZATION
-        var auth = request.headers['X-APP-TOKEN'];
-        var auth = request.headers['Authorization'];
+        //var auth = request.headers['X-APP-TOKEN'];
+        //var auth = request.headers['Authorization'];
         //fire parse query and get rides going to same destinaton & starting point is within 3 kms.
         var Parse = require('parse/node');
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         var query = new Parse.Query("Ride");
         // Interested in locations near user.
         var point = new Parse.GeoPoint({latitude: Number(pickup_lat), longitude: Number(pickup_lng)});
-        //query.near("pickupPoint", point);
         query.withinKilometers("pickupPoint", point, 3);
         query.equalTo("shareOk", true);
         query.equalTo("destinationLat", Number(drop_lat));
         query.equalTo("destinationLng", Number(drop_lng));
-        // Limit what could be a lot of points.
         query.limit(10);
         query.find({
           success: function(rideObjects) {
