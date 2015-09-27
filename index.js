@@ -62,14 +62,14 @@ if (cluster.isMaster) {
               success: function(userFilter) {
                 Parse.Push.send({
                   where: query,
-                  data: {
+                  data: JSON.stringify({
                     "text": "Sachin has agreed to share the ride with you",
                     "rideId": request.query.rideId,
                     "type": "status",
                     "sharingOlaUserId": request.query.sharingOlaUserId,
                     "bookingOlaUserId": request.query.bookingOlaUserId,
                     "confirm": true
-                  }
+                  })
                 }, {
                   success: function() {
                     response.jsonp({success: true});
@@ -95,14 +95,14 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");        
         Parse.Push.send({
           where: query,
-          data: {
+          data: JSON.stringify({
             "text": "Sachin has declined to share the ride with you",
             "type": "status",
             "rideId": request.query.rideId,
             "sharingOlaUserId": request.query.sharingOlaUserId,
             "bookingOlaUserId": request.query.bookingOlaUserId,
             "confirm": false
-          }
+          })
         }, {
           success: function() {
             response.jsonp({success: true});
@@ -118,19 +118,18 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
           where: query,
-          data: {
+          data: JSON.stringify({
             "text": "Willie Hayes has requested to share a ride with you",
             "type": "request",
             "rideId": request.query.rideId,            
             "sharingOlaUserId": request.query.sharingOlaUserId,
             "bookingOlaUserId": request.query.bookingOlaUserId
-          }
+          })
         }, {
           success: function() {
             response.jsonp({success: true});
           },
           error: function(error) {
-            console.log(error);
             response.jsonp({success: false});
           }
         });
