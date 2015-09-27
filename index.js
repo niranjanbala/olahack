@@ -57,8 +57,9 @@ if (cluster.isMaster) {
                 ride.set("sharedWithOlaUserIds", ids);
                 ride.save(null, {
                     success: function(userFilter) {
+                        var confirmQuery = new Parse.Query(Parse.Installation);
                         Parse.Push.send({
-                            where: query,
+                            where: confirmQuery,
                             data: {
                                 alert: "Gokul has agreed to share the ride with you"
                             }
@@ -124,8 +125,6 @@ if (cluster.isMaster) {
             data: {
                 alert: "Rajesh has requested to share a ride with you",
                 action: JSON.stringify({
-                    "text": "Rajesh has requested to share a ride with you",
-                    "type": "request",
                     "rideId": request.query.rideId,
                     "sharingOlaUserId": request.query.sharingOlaUserId,
                     "bookingOlaUserId": request.query.bookingOlaUserId
