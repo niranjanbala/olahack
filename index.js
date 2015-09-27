@@ -62,7 +62,8 @@ if (cluster.isMaster) {
                         Parse.Push.send({
                             where: confirmQuery,
                             data: {
-                                alert: "Gokul has agreed to share the ride with you"
+                                alert: "Gokul has agreed to share the ride with you",
+                                action: request.query.rideId
                             }
                         }, {
                             success: function() {
