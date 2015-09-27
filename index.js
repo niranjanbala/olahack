@@ -48,55 +48,71 @@ if (cluster.isMaster) {
         var query = new Parse.Query("Ride");
         query.equalTo("rideId", request.query.rideId);
         query.first({
-          success: function(ride) {
-            var ids=ride.get("sharedWithOlaUserIds");
-            ids.push(request.query.sharingOlaUserId)
-            if(ids.length==ride.get("availableSeats")){
-                ride.set("shareOk", false);                                
-            }
-            ride.set("sharedWithOlaUserIds", ids);
-            ride.save(null, {
-              success: function(userFilter) {
-                Parse.Push.send({
-                  where: query,
-                  data: {
-                    alert: "Gokul has agreed to share the ride with you"
-                  }
-                }, {
-                  success: function() {
-                    response.jsonp({success: true});
-                  },
-                  error: function(error) {
-                    response.jsonp({success: false, "message": error.message});
-                  }
+            success: function(ride) {
+                var ids = ride.get("sharedWithOlaUserIds");
+                ids.push(request.query.sharingOlaUserId)
+                if (ids.length == ride.get("availableSeats")) {
+                    ride.set("shareOk", false);
+                }
+                ride.set("sharedWithOlaUserIds", ids);
+                ride.save(null, {
+                    success: function(userFilter) {
+                        Parse.Push.send({
+                            where: query,
+                            data: {
+                                alert: "Gokul has agreed to share the ride with you"
+                            }
+                        }, {
+                            success: function() {
+                                response.jsonp({
+                                    success: true
+                                });
+                            },
+                            error: function(error) {
+                                response.jsonp({
+                                    success: false,
+                                    "message": error.message
+                                });
+                            }
+                        });
+                    },
+                    error: function(userFilter, error) {
+                        response.jsonp({
+                            success: false,
+                            "message": error.message
+                        });
+                    }
                 });
-              },
-              error: function(userFilter, error) {
-                response.jsonp({success: false, "message": error.message});
-              }
-            });
-          },
-          error: function(error) {
-            response.jsonp({success: false, "message": error.message});
-          }
-        });        
+            },
+            error: function(error) {
+                response.jsonp({
+                    success: false,
+                    "message": error.message
+                });
+            }
+        });
     });
     app.get('/cancel', function(request, response) {
         var Parse = require('parse/node');
         var query = new Parse.Query(Parse.Installation);
-        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");        
+        Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
-          where: query,
-          data: {
-            alert: "Gokul has declined to share the ride with you"
-          }
+            where: query,
+            data: {
+                alert: "Gokul has declined to share the ride with you"
+            }
         }, {
-          success: function() {
-            response.jsonp({success: true});
-          },
-          error: function(error) {
-            response.jsonp({success: false, "message": error.message});
-          }
+            success: function() {
+                response.jsonp({
+                    success: true
+                });
+            },
+            error: function(error) {
+                response.jsonp({
+                    success: false,
+                    "message": error.message
+                });
+            }
         });
     });
     app.get('/share', function(request, response) {
@@ -104,30 +120,35 @@ if (cluster.isMaster) {
         var query = new Parse.Query(Parse.Installation);
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         Parse.Push.send({
-          where: query,
-          data: {
-            alert: JSON.stringify({
-            "text": "Rajesh has requested to share a ride with you",
-            "type": "request",
-            "rideId": request.query.rideId,            
-            "sharingOlaUserId": request.query.sharingOlaUserId,
-            "bookingOlaUserId": request.query.bookingOlaUserId
-            })
+            where: query,
+            data: {
+                alert: "Rajesh has requested to share a ride with you",
+                action: JSON.stringify({
+                    "text": "Rajesh has requested to share a ride with you",
+                    "type": "request",
+                    "rideId": request.query.rideId,
+                    "sharingOlaUserId": request.query.sharingOlaUserId,
+                    "bookingOlaUserId": request.query.bookingOlaUserId
+                })
             }
         }, {
-          success: function() {
-            response.jsonp({success: true});
-          },
-          error: function(error) {
-            response.jsonp({success: false});
-          }
+            success: function() {
+                response.jsonp({
+                    success: true
+                });
+            },
+            error: function(error) {
+                response.jsonp({
+                    success: false
+                });
+            }
         });
     });
     app.get('/book', function(request, response) {
-        var pickup_lat=request.query.pickup_lat;
-        var pickup_lng=request.query.pickup_lng;
-        var drop_lat=request.query.drop_lat;
-        var drop_lng=request.query.drop_lng;
+        var pickup_lat = request.query.pickup_lat;
+        var pickup_lng = request.query.pickup_lng;
+        var drop_lat = request.query.drop_lat;
+        var drop_lng = request.query.drop_lng;
         //X-APP-TOKEN
         //AUTHORIZATION
         //var auth = request.headers['X-APP-TOKEN'];
@@ -137,40 +158,43 @@ if (cluster.isMaster) {
         Parse.initialize("1PVc9kiXAOabkReQrVOBodTHI3OniukOSpBCRhdD", "OtgCfBLT5OhzlgUZxzNShHx46rcp1rpmdSNLDyje");
         var query = new Parse.Query("Ride");
         // Interested in locations near user.
-        var point = new Parse.GeoPoint({latitude: Number(pickup_lat), longitude: Number(pickup_lng)});
+        var point = new Parse.GeoPoint({
+            latitude: Number(pickup_lat),
+            longitude: Number(pickup_lng)
+        });
         query.withinKilometers("pickupPoint", point, 3);
         query.equalTo("shareOk", true);
         query.equalTo("destinationLat", Number(drop_lat));
         query.equalTo("destinationLng", Number(drop_lng));
         query.limit(10);
         query.find({
-          success: function(rideObjects) {
-            var rideOptions=[];
-            for(var i=0;i<rideObjects.length;i++) {
-                var rideObject=rideObjects[i];
-                var rideInfo=rideObject.get("olaRideTrackInfo");
-                if(rideObject.get("sharedWithOlaUserIds").length<rideObject.get("availableSeats"))
+            success: function(rideObjects) {
+                var rideOptions = [];
+                for (var i = 0; i < rideObjects.length; i++) {
+                    var rideObject = rideObjects[i];
+                    var rideInfo = rideObject.get("olaRideTrackInfo");
+                    if (rideObject.get("sharedWithOlaUserIds").length < rideObject.get("availableSeats"))
+                        rideOptions.push({
+                            "rideId": rideObject.id,
+                            "olaUserId": rideObject.get("olaUserId"),
+                            "pickup": rideObject.get("pickupPoint"),
+                            "desitinationLat": rideObject.get("destinationLat"),
+                            "desitinationLng": rideObject.get("destinationLng"),
+                            "timeToYourPlace": "10 minute",
+                            "driver_name": rideInfo.driver_name,
+                            "car_model": rideInfo.car_model,
+                            "cab_number": rideInfo.cab_number
+                        });
+                }
                 rideOptions.push({
-                    "rideId": rideObject.id,
-                    "olaUserId":rideObject.get("olaUserId"),
-                    "pickup": rideObject.get("pickupPoint"),
-                    "desitinationLat": rideObject.get("destinationLat"),
-                    "desitinationLng": rideObject.get("destinationLng"),
-                    "timeToYourPlace": "10 minute",
-                    "driver_name": rideInfo.driver_name,
-                    "car_model":rideInfo.car_model,
-                    "cab_number":rideInfo.cab_number
-                });
-            }
-            rideOptions.push({
                     "id": "sedan",
                     "eta": 2,
-            });
-            response.jsonp({
-                "rideOptions": rideOptions,
-            });
-          }
-        });        
+                });
+                response.jsonp({
+                    "rideOptions": rideOptions,
+                });
+            }
+        });
     });
     app.set('port', process.env.PORT || 80);
     app.listen(app.get('port'), function() {
